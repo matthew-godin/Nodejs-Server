@@ -90,5 +90,49 @@ async function getCourses() {
     console.log(courses);
 }
 
+async function updateCourse(id) {
+    // First Approach: Query first
+    // findById()
+    // Modify its properties
+    // save()
+    //const course = await Course.findById(id);
+    //if (!course) return;
+    //course.isPublished = true;
+    //course.author = 'Another Author';
+    /*course.set({
+        isPublished: true,
+        author: 'Another Author'
+    });*/ // Another approach to modify the properties
+    //const result = await course.save();
+    //console.log(result);
+    // Second Approach: Update first
+    // Update directly
+    // Optionally: get the updated document
+    // First approach is needed if you need to
+    // check something before proceeding
+    const result = await Course.update( { _id: id }, 
+        { $set: { author: 'Mosh',
+            isPublished: false}}); // in the second update parameter,
+           // we need to use one or more of the
+           // mongodb update operators
+           // There's also findByIdAndUpdate
+           // to do both. We get the original document
+           // with that (before the update operation)
+           // pass the following third argument to get
+           // the updated document: { new: true }
+    console.log(result);
+}
+
+async function removeCourse(id) {
+    const result = await Course.deleteOne({ _id: id });
+    console.log(result);
+                                   // does on the
+                                   // first one
+    // deleteMany to delete all satisfying documents
+    // findByIdAndRemove to return the document
+}
+
 //createCourse();
-getCourses();
+//getCourses();
+/*updateCourse*/
+removeCourse('5ebd6d17ec54ed1811051d8e');

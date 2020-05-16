@@ -114,7 +114,7 @@ async function getCourses() {
     // e.g. how it could be in the real world below
     // /api/courses?pageNumber=2&pageSize=10
     const courses = await Course
-        .find({ _id: '5ebfb36a2f5dd310c9650a28'} )
+        .find( { _id: '5ebfb36a2f5dd310c9650a28' } )
         //.find({ author: 'Mosh', isPublished: true })
         //.find({ price: 10 }) // this is only 10
         //.find({ price: { $gt: 10, $lte: 20 } })

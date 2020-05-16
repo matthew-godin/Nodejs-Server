@@ -5,12 +5,70 @@ mongoose.connect('mongodb://localhost/playground')
     .catch(err => console.error('Could not connect'
                                 + ' to MongoDB...',
                                 err));
-const courseSchema = new mongoose.Schema({
+/*const courseSchema = new mongoose.Schema({
     name: String,
     author: String,
     tags: [ String ],
     date: { type: Date, default: Date.now },
     isPublished: Boolean
+});*/
+// It is not required to follow that scheme
+// to put stuff in MongoDB
+// Let's implement validation
+// following is only meaning something in Mongoose,
+// not MongoDB
+const courseSchema = new mongoose.Schema({
+    name: { type: String, required: true,
+            minlength: 5, maxlength: 255,
+            //match: /pattern/
+    },
+    category: {
+        type: String,
+        required: true,
+        enum: ['web', 'mobile', 'network'],
+        lowercase: true,
+        // uppercase: true,
+        trim: true
+    },
+    author: String,
+    //tags: [ String ],
+    // Custom validation
+    tags: {
+        type: Array,
+        // below is a sync validator
+        /*validate: {
+            validator: function(v) {
+                return v && v.length > 0;
+            },
+            message: 'A course should have at '
+                     + 'least one tag'
+        }*/
+        // below is an async validator
+        validate: {
+            isAsync: true,
+            validator: function(v, callback) {
+                setTimeout(() => {
+                    // some async work
+                    const result = v && v.length > 0;
+                    callback(result);
+                }, 4000);
+            },
+            message: 'A course should have at '
+                     + 'least one tag'
+        }
+    },
+    date: { type: Date, default: Date.now },
+    isPublished: Boolean,
+    price: {
+        type: Number,
+        required: function() {
+            return this.isPublished;
+        }, // arrow functions don't have their own this
+        min: 10,
+        max: 200, // also have max,min for dates
+        get: v => Math.round(v),
+        set: v => Math.round(v)
+    }
 });
 // Mongoose Schema Types:
 // 1. String
@@ -24,12 +82,28 @@ const Course = mongoose.model('Course', courseSchema);
 async function createCourse() {
     const course = new Course({
         name: 'Angular Course',
+        category: 'Web',//'web',//'-',
         author: 'Mosh',
-        tags: ['node', 'frontend'],
-        isPublished: true
+        tags: ['frontend'],
+        //null,//tags: [],//['node', 'frontend'],
+        isPublished: true,
+        price: 15.8
     });
-    const result = await course.save();
-    console.log(result);
+    try {
+        /*course.validate((err) => {
+            if (err) { }
+        });*/
+        //const isValid = await course.validate();
+        //if (!isValid) { /* some stuff */ }
+        const result = await course.save();
+        console.log(result);
+    } catch (ex) {
+        //console.log(ex.message);
+        for (field in ex.errors) {
+            //console.log(ex.errors[field]);
+            console.log(ex.errors[field].message);
+        }
+    }
 }
 
 async function getCourses() {
@@ -40,7 +114,8 @@ async function getCourses() {
     // e.g. how it could be in the real world below
     // /api/courses?pageNumber=2&pageSize=10
     const courses = await Course
-        .find({ author: 'Mosh', isPublished: true })
+        .find({ _id: '5ebfb36a2f5dd310c9650a28'} )
+        //.find({ author: 'Mosh', isPublished: true })
         //.find({ price: 10 }) // this is only 10
         //.find({ price: { $gt: 10, $lte: 20 } })
         //.find({ price: { $in: [10, 15, 20] } })
@@ -54,15 +129,15 @@ async function getCourses() {
                                    // expression
         //.find({ author: /Hamedani$/i })
         //.find({ author: /.*Mosh.*/i })
-        .skip((pageNumber - 1) * pageSize) // to do
+        //.skip((pageNumber - 1) * pageSize) // to do
                                            // pagination
-        .limit(/*10*/pageSize) // with this, we can
+        //.limit(/*10*/pageSize) // with this, we can
                                // get the document
                                // at a given page
         .sort({ name: 1 }) // 1 indicates ascending
                            // order
         //.count();
-        .select({ name: 1, tags: 1 });
+        .select({ name: 1, tags: 1, price: 1 });
     // MongoDB and Mongoose have comparison operators
     // eq (equal)
     // ne (not equal)
@@ -87,7 +162,8 @@ async function getCourses() {
     // You can also use more complex regular
     // expressions. These are basically Javascript
     // regular expressions
-    console.log(courses);
+    //console.log(courses);
+    console.log(courses[0].price);
 }
 
 async function updateCourse(id) {
@@ -133,6 +209,6 @@ async function removeCourse(id) {
 }
 
 //createCourse();
-//getCourses();
+getCourses();
 /*updateCourse*/
-removeCourse('5ebd6d17ec54ed1811051d8e');
+//removeCourse('5ebd6d17ec54ed1811051d8e');

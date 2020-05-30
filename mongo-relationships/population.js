@@ -80,7 +80,7 @@ async function listCourses() {
     //.populate('author')
     //.populate('author', 'name')
     .populate('author', 'name -_id')
-    .populate('category', 'name')
+    //.populate('category', 'name')
     .select('name author'); // not what we want
                             // without populate
   console.log(courses);
@@ -88,6 +88,6 @@ async function listCourses() {
 
 //createAuthor('Mosh', 'My bio', 'My Website');
 
-//createCourse('Node Course', '5ec80866d712d926f486c67e')
+//createCourse('Node Course', '5ed2796e192c4b27353cfbfc');
 
 listCourses();

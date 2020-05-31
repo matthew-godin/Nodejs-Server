@@ -2,6 +2,9 @@ const {Movie} = require('./movie');
 const {Customer} = require('./customer');
 const mongoose = require('mongoose');
 const Joi = require('joi');
+//Joi.objectId = require('joi-objectid')(Joi);
+// We actually prefer to have the above in index.js
+// to not have to repeat ourselves in different files
 const Rental = mongoose.model('Rental',
                              new mongoose.Schema({
     customer: {
@@ -57,9 +60,13 @@ const Rental = mongoose.model('Rental',
     }
 }));
 function validateRental(rental) {
+    // To validate IDs, we use the joi-objectid
+    // npm package
     const schema = {
-        customerId: Joi.string().required(),
-        movieId: Joi.string().required()
+        customerId: Joi.objectId().required(),
+        movieId: Joi.objectId().required()
+        //customerId: Joi.string().required(),
+        //movieId: Joi.string().required()
     }
     return Joi.validate(rental, schema);
 }

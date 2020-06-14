@@ -1,3 +1,5 @@
+const auth = require('../middleware/auth');
+const admin = require('../middleware/admin');
 const {Genre, validate} = require('../models/genre');
 const mongoose = require('mongoose');
 //const Joi = require('joi');
@@ -27,7 +29,7 @@ router.get('/:id', async (req, res) => {
         + 'given ID was not found');
     res.send(genre);
 });
-router.post('/', async (req, res) => {
+router.post('/', auth, async (req, res) => {
     const { error } = validate(req.body);
     //validateGenre(req.body);
     if (error) return res.status(400).send(
@@ -53,7 +55,7 @@ router.post('/', async (req, res) => {
     }
     res.send(genre);
 });
-router.put('/:id', async (req, res) => {
+router.put('/:id', auth, async (req, res) => {
     //const genre = genres.find(c => c.id ===
     //    parseInt(req.params.id));
     var genre = await Genre
@@ -73,7 +75,7 @@ router.put('/:id', async (req, res) => {
         {new: true});
     res.send(genre);
 });
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', [auth, admin], async (req, res) => {
     //const genre = genres.find(c => c.id ===
     //    parseInt(req.params.id));
     const genre = await Genre

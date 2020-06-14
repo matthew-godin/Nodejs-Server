@@ -1,3 +1,4 @@
+const auth = require('../middleware/auth');
 const {Customer, validate} =
     require('../models/customer');
 const mongoose = require('mongoose');
@@ -27,7 +28,7 @@ router.get('/:id', async (req, res) => {
         + 'given ID was not found');
     res.send(customer);
 });
-router.post('/', async (req, res) => {
+router.post('/', auth, async (req, res) => {
     const { error } = validate(req.body);
     //validateCustomer(req.body);
     if (error) return res.status(400).send(
@@ -49,7 +50,7 @@ router.post('/', async (req, res) => {
     }
     res.send(customer);
 });
-router.put('/:id', async (req, res) => {
+router.put('/:id', auth, async (req, res) => {
     var customer = await Customer
         .findById(req.params.id);
     if (!customer || customer.length === 0)
@@ -68,7 +69,7 @@ router.put('/:id', async (req, res) => {
         {new: true});
     res.send(customer);
 });
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', auth, async (req, res) => {
     const customer = await Customer
         .findById(req.params.id);
     if (!customer || customer.length === 0)

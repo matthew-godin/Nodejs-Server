@@ -7,7 +7,7 @@ module.exports = function() {
             colorize: true, prettyPrint: true
         }),
         new winston.transports.File({
-        filename: 'uncaughtExeptions.log'
+        filename: 'uncaughtExceptions.log'
     }));
     process.on('unhandledRejection', (ex) => {
         throw ex;

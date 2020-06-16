@@ -1,3 +1,4 @@
+//const asyncMiddleware = require('../middleware/async');
 const auth = require('../middleware/auth');
 const admin = require('../middleware/admin');
 const {Genre, validate} = require('../models/genre');
@@ -11,13 +12,36 @@ const router = express.Router();
     name: { type: String, required: true,
             minlength: 5, maxlength: 50 }
 }));*/
-router.get('/', async (req, res) => {
+/*function asyncMiddleware(handler) {
+    return (req, res, next) => {
+        try {
+            await handler(req, res);
+        } catch (ex) {
+            next(ex);
+        }
+    };
+}*/
+router.get('/', /*asyncMiddleware(*/
+    async (req, res) => {
     //res.send(genres);
+    // winston will log this automatically
+    throw new Error('Could not get the genres.');
     const genres = await Genre
-        .find()
-        .sort('name');
-    res.send(genres);
-});
+            .find()
+            .sort('name');
+        res.send(genres);
+    /*try {
+        const genres = await Genre
+            .find()
+            .sort('name');
+        res.send(genres);
+    } catch (ex) {
+        // Log the exception also
+        // (will be implemented later)
+        //res.status(500).send('Something failed.');
+        next(ex);
+    }*/
+})/*)*/;
 router.get('/:id', async (req, res) => {
     //const genre = genres.find(c => c.id ===
     //    parseInt(req.params.id));
@@ -29,7 +53,12 @@ router.get('/:id', async (req, res) => {
         + 'given ID was not found');
     res.send(genre);
 });
-router.post('/', auth, async (req, res) => {
+// The express-async-errors module
+// will wrap our routes within
+// something like this at runtime
+// for us
+router.post('/', auth, //asyncMiddleware(
+    async (req, res) => {
     const { error } = validate(req.body);
     //validateGenre(req.body);
     if (error) return res.status(400).send(
@@ -54,7 +83,7 @@ router.post('/', auth, async (req, res) => {
         }
     }
     res.send(genre);
-});
+})/*)*/;
 router.put('/:id', auth, async (req, res) => {
     //const genre = genres.find(c => c.id ===
     //    parseInt(req.params.id));

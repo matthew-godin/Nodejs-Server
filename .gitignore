@@ -5,3 +5,5 @@ vidly/node_modules/
 async-demo/node_modules/
 mongo-demo/node_modules/
 mongo-relationships/node_modules/
+vidly/logfile.log
+vidly/uncaughtExceptions.log

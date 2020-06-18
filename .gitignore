@@ -7,3 +7,4 @@ mongo-demo/node_modules/
 mongo-relationships/node_modules/
 vidly/logfile.log
 vidly/uncaughtExceptions.log
+tests/node_modules/

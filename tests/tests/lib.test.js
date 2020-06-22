@@ -1,4 +1,6 @@
 const lib = require('../lib');
+const db = require('../db');
+const mail = require('../mail');
 /*test('Our first test', () => {
     throw new Error('Something failed');
 });*/
@@ -107,3 +109,50 @@ test('absolute - should return 0 '
     const result = lib.absolute(0);
     expect(result).toBe(0);
 });*/
+
+describe('applyDiscount', () => {
+    it('should apply 10% discount if customer has '
+       + 'more than 10 points', () => {
+       // Mock function
+       db.getCustomerSync = function(customerId) {
+           console.log('Fake reading customer...');
+           return { id: customerId, points: 20 };
+       }
+       const order = { customerId: 1, totalPrice: 10 };
+       lib.applyDiscount(order);
+       expect(order.totalPrice).toBe(9);
+    });
+});
+
+describe('notifyCustomer', () => {
+    it('should send an email to the customer', () => {
+        // Jest has a better approach for Mock function
+        //const mockFunction = jest.fn();
+        //mockFunction.mockReturnValue(1);
+        //mockFunction.mockResolvedValue(1);
+        //mockFunction.mockRejectedValue(new Error('...'));
+        //const result = mockFunction();
+        //const result = await mockFunction();
+        db.getCustomerSync = jest.fn().mockReturnValue({
+            email: 'a'
+        });
+        mail.send = jest.fn();
+        /*// Mock function
+        db.getCustomerSync = function(customerId) {
+            return { email: 'a' };
+        }
+        let mailSent = false;
+        // Mock function
+        mail.send = function(email, message) {
+            mailSent = true;
+        }*/
+        lib.notifyCustomer({ customerId: 1 });
+        //expect(mailSent).toBe(true);
+        expect(mail.send).toHaveBeenCalled();
+        // Better to not check for exact equality for strings
+        // but ok ofr numbers
+        //expect(mail.send).toHaveBeenCalledWith('a', '...');
+        expect(mail.send.mock.calls[0][0]).toBe('a');
+        expect(mail.send.mock.calls[0][1]).toMatch(/order/);
+    });
+});

@@ -14,3 +14,4 @@ describe('user.generateAuthToken', () => {
         expect(decoded).toMatchObject(payload);
     });
 });
+// $NODE_ENV=test node index.js

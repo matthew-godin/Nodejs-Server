@@ -25,7 +25,8 @@ router.get('/', /*asyncMiddleware(*/
     async (req, res) => {
     //res.send(genres);
     // winston will log this automatically
-    throw new Error('Could not get the genres.');
+    // below was for some error logging testing
+    //throw new Error('Could not get the genres.');
     const genres = await Genre
             .find()
             .sort('name');

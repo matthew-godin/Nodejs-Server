@@ -8,6 +8,7 @@ const winston = require('winston');
 //const mongoose = require('mongoose');
 const express = require('express');
 const app = express();
+app.use(express.json());
 require('./startup/routes')(app);
 require('./startup/db')();
 require('./startup/logging')();
@@ -57,7 +58,7 @@ const auth = require('./routes/auth');*/
     .catch(err => console.error('Could not connect'
                                 + ' to MongoDB...',
                                 err));*/
-app.use(express.json()); // to enable JSON parsing
+//app.use(express.json()); // to enable JSON parsing
                          // in Express
 /*app.use('/api/genres', genres);
 app.use('/api/customers', customers);
@@ -71,6 +72,8 @@ app.use(/*function(err, req, res, next) {
     res.status(500).send('Something failed.');*/
 //}*/error);
 const port = process.env.PORT || 3000;
-app.listen(port, () =>
+const server = app.listen(port, () =>
+//app.listen(port, () =>
     //console.log(`Listening on port ${port}...`));
     console.info(`Listening on port ${port}...`));
+module.exports = server;

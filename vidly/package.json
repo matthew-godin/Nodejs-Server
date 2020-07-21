@@ -35,7 +35,7 @@
     "supertest": "^3.0.0"
   },
   "scripts": {
-    "test": "jest --watchAll --verbose"
+    "test": "jest --watchAll --verbose --coverage"
   },
   "keywords": [],
   "author": "",
